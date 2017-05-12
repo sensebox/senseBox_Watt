@@ -1,5 +1,4 @@
 #include <Arduino.h>
-
 #include <Wire.h>
 #include <RV8523.h>
 #include <SPI.h>
@@ -83,7 +82,7 @@ boolean firstTime = true;
 uint8_t sec , min, hour, day, month;
 uint16_t year;
 unsigned long starttime;
-unsigned long sampletime_ms = 30000;
+unsigned long sampletime_ms = 30000; //set Sample time in milliseconds
 
 String data = "";
 int cases = 1;
@@ -99,7 +98,7 @@ Serial.begin(9600);
 
 
   rtc.start();
-rtc.batterySwitchOver(1);
+  rtc.batterySwitchOver(1);
 
   SD.begin(chipSelect);
   //Temp
@@ -119,7 +118,7 @@ void loop() {
 
   switch (cases){
     case 1:
-       sleep(30000);
+       sleep(sampletime_ms);
        data = "";
        gettime();
        break;
@@ -127,18 +126,12 @@ void loop() {
         temp();
         break;
     case 3:
-        conductiviy();
-      break;
-    case 4:
-        battery();
-       break;
-    case 5:
         turbidity();
         break;
-    case 6:
+    case 4:
     accelerometer();
         break;
-    case 7:
+    case 5:
        char charFileName[nameOfFile.length()+1];
         nameOfFile.toCharArray(charFileName, sizeof(charFileName));
         file = SD.open(charFileName, FILE_WRITE);
@@ -147,7 +140,7 @@ void loop() {
         pulses = 0;
         break;
   }
-  if (cases == 7){
+  if (cases == 5){
     cases = 1;
       }
   else cases++;
@@ -235,14 +228,6 @@ void temp (){
   temperatur = sensors.getTempCByIndex(0);
 }
 
-void conductiviy(){
-  
-}
-
-void battery(){
-  voltage = analogRead(A1);
-  voltage = ((voltage/1024)*5);
-}
 
 void turbidity(){
    truebung = analogRead(A2);
